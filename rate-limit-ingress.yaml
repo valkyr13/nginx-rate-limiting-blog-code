@@ -1,0 +1,53 @@
+apiVersion: networking.k8s.io/v1
+
+kind: Ingress
+
+metadata:
+
+  name: rate-limit-ingress
+
+  annotations:
+    nginx.ingress.kubernetes.io/server-snippet: |
+
+        limit_req zone=one_zone burst=6 nodelay;                                                   
+
+        limit_req_status 429;
+      
+
+spec:
+
+  rules:
+
+    - host: hello-world.info
+
+      http:
+
+        paths:
+
+          - path: /
+
+            pathType: Prefix
+
+            backend:
+
+              service:
+
+                name: web
+
+                port:
+
+                  number: 8080
+
+          - path: /v2
+
+            pathType: Prefix
+
+            backend:
+
+              service:
+
+                name: web2
+
+                port:
+
+                  number: 8080
